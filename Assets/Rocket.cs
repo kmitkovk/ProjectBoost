@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
@@ -8,8 +7,22 @@ public class Rocket : MonoBehaviour
     Rigidbody rigidBody;
     AudioSource audioSource;
 
+    enum State {Alive, Dying, Transcending}
+    State state = State.Alive;
+
+    int currentLevel = 0;
+
     [SerializeField] float rcsThrust = 200f;
     [SerializeField] float mainThrust = 300f;
+
+    [SerializeField] AudioClip mainEngine;
+    [SerializeField] AudioClip deathSound;
+    [SerializeField] AudioClip sucessSound;
+
+    [SerializeField] ParticleSystem mainEngineParticles;
+    [SerializeField] ParticleSystem successParticles;
+    [SerializeField] ParticleSystem deathParticles;
+
 
 
     void Start()
@@ -23,28 +36,89 @@ public class Rocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Thrust();
-        Rotate();
+        if (state == State.Alive)
+        { 
+            RespondToThrustInput();
+            RespondToRotateInput();
+        }
+
     }
 
-    void Thrust()
+    void OnCollisionEnter(Collision collision)
+    {
+
+        if (state != State.Alive) { return; } //ignore colisions when dead
+
+
+        switch (collision.gameObject.tag)
+        {
+            case "Friendly":
+                //do nothing on friendly objects
+                print("OK collision");
+                break;
+
+            case "Finish":
+                StartSuccessSequence();
+                break;
+
+            default:
+                StartDeathSequence();
+                break;
+        }
+    }
+
+    void StartSuccessSequence()
+    {
+        //do nothing on friendly objects
+        print("END LEVEL");
+        state = State.Transcending;
+        audioSource.Stop();
+        if(!successParticles.isPlaying) { successParticles.Play(); }
+        audioSource.PlayOneShot(sucessSound, 0.2f); // second arg for volume
+        currentLevel++;
+        Invoke("LoadNextLevel", 1f); // parametarize the time
+    }
+
+    void StartDeathSequence()
+    {
+        print("Hit Something Deadly"); // kill player
+        state = State.Dying;
+        audioSource.Stop();
+        if (!deathParticles.isPlaying) { deathParticles.Play(); }
+        audioSource.PlayOneShot(deathSound, 0.2f); // second arg for volume
+        Invoke("LoadFirstLevel", 0.5f);
+    }
+
+    void RespondToThrustInput()
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            ///print("Thursting"); // Can thurst while rotating thats while blow we have IF not else...its inclusinve
-            rigidBody.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
-            if (!audioSource.isPlaying) //so it doesnt layer on top of each other..
-            {
-                audioSource.Play();
-            }
+            ApplyThrust();
         }
         else
         {
             audioSource.Stop();
+            mainEngineParticles.Stop();
         }
     }
 
-    void Rotate()
+    void ApplyThrust()
+    {
+        ///print("Thursting"); // Can thurst while rotating thats while blow we have IF not else...its inclusinve
+        rigidBody.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
+        if (!audioSource.isPlaying) //so it doesnt layer on top of each other..
+        {
+            audioSource.PlayOneShot(mainEngine);
+        }
+
+        if (!mainEngineParticles.isPlaying) // simple mainEnginePartc.Play() wasnt working
+        {
+            mainEngineParticles.Play();
+        }
+        
+    }
+
+    void RespondToRotateInput()
     {
         float rotationThisFrame = rcsThrust * Time.deltaTime;
 
@@ -68,23 +142,15 @@ public class Rocket : MonoBehaviour
         rigidBody.freezeRotation = false; //here we resume the physics control of rotation
     }
 
-    void OnCollisionEnter(Collision collision)
+
+    void LoadNextLevel()
     {
-        switch (collision.gameObject.tag)
-        {
-            case "Friendly":
-                //do nothing on friendly objects
-                print("OK collision");
-                break;
+        audioSource.Stop();
+        SceneManager.LoadScene(currentLevel); // TODO allow for more than 2 levels.
+    }
 
-            case "Fuel":
-                //do nothing on friendly objects
-                print("OK collision");
-                break;
-
-            default:
-                print("DEAD"); // kill player
-                break;
-        }
+    void LoadFirstLevel()
+    {
+        SceneManager.LoadScene(currentLevel); // todo allow for more than 2 levels
     }
 }
