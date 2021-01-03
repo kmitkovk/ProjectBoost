@@ -903,6 +903,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9178489713161789768, guid: 6575a067839dbf04ba4c9741e3335d9c,
+        type: 3}
+      propertyPath: m_Constraints
+      value: 56
+      objectReference: {fileID: 0}
     - target: {fileID: 9178489713161789769, guid: 6575a067839dbf04ba4c9741e3335d9c,
         type: 3}
       propertyPath: m_Name
@@ -1460,7 +1465,7 @@ PrefabInstance:
     - target: {fileID: 4127103767448372391, guid: f7e43915f6cd6684bbc4db9b8b2931cb,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.7
+      value: -5.6
       objectReference: {fileID: 0}
     - target: {fileID: 4127103767448372391, guid: f7e43915f6cd6684bbc4db9b8b2931cb,
         type: 3}
@@ -1470,7 +1475,7 @@ PrefabInstance:
     - target: {fileID: 4127103767448372391, guid: f7e43915f6cd6684bbc4db9b8b2931cb,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.5
+      value: -1.1
       objectReference: {fileID: 0}
     - target: {fileID: 4127103767448372391, guid: f7e43915f6cd6684bbc4db9b8b2931cb,
         type: 3}
@@ -2493,7 +2498,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1151583229, guid: 1ee7f641de68cc249a3d5aec459caaf6, type: 3}
       propertyPath: movementVector.y
-      value: 10
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 927732501607930215, guid: 1ee7f641de68cc249a3d5aec459caaf6,
         type: 3}
@@ -2508,12 +2513,12 @@ PrefabInstance:
     - target: {fileID: 927732501607930215, guid: 1ee7f641de68cc249a3d5aec459caaf6,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 34.4
+      value: 39.3
       objectReference: {fileID: 0}
     - target: {fileID: 927732501607930215, guid: 1ee7f641de68cc249a3d5aec459caaf6,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 18
+      value: 14.6
       objectReference: {fileID: 0}
     - target: {fileID: 927732501607930215, guid: 1ee7f641de68cc249a3d5aec459caaf6,
         type: 3}

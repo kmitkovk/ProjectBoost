@@ -10,8 +10,6 @@ public class Rocket : MonoBehaviour
     enum State {Alive, Dying, Transcending}
     State state = State.Alive;
 
-    int currentLevel = 0;
-
     [SerializeField] float rcsThrust = 200f;
     [SerializeField] float mainThrust = 300f;
     [SerializeField] float levelLoadDelay = 1f;
@@ -75,7 +73,6 @@ public class Rocket : MonoBehaviour
         audioSource.Stop();
         if(!successParticles.isPlaying) { successParticles.Play(); }
         audioSource.PlayOneShot(sucessSound, 0.2f); // second arg for volume
-        currentLevel++;
         Invoke("LoadNextLevel", levelLoadDelay); 
     }
 
@@ -87,7 +84,7 @@ public class Rocket : MonoBehaviour
         //transform.DetachChildren(); find a way to make the booster and nose fly off
         if (!deathParticles.isPlaying) { deathParticles.Play(); }
         audioSource.PlayOneShot(deathSound, 0.2f); // second arg for volume
-        Invoke("LoadFirstLevel", 0.5f);
+        Invoke("LoadCurrentLevel", 0.5f);
     }
 
     void RespondToThrustInput()
@@ -121,37 +118,37 @@ public class Rocket : MonoBehaviour
 
     void RespondToRotateInput()
     {
-        float rotationThisFrame = rcsThrust * Time.deltaTime;
-
-        // take manual control of the roatation (below)
-        // freeze physics rotatation before we take manual control of rotation
-        rigidBody.freezeRotation = true;
         
+        float rotationThisFrame = rcsThrust * Time.deltaTime;
+                
         if (Input.GetKey(KeyCode.A)) // here in the below we have else becase we want these exclusive
         {
-            //print("Rotating Right");
-            
+            // remove rotation due to physiscs
+            rigidBody.angularVelocity = Vector3.zero;
             transform.Rotate(Vector3.forward * rotationThisFrame);
         }
 
         else if (Input.GetKey(KeyCode.D)) // A takes presedence because it comes first
         {
-            //print("Rotating Left");
+            // remove rotation due to physiscs
+            rigidBody.angularVelocity = Vector3.zero;
             transform.Rotate(-Vector3.forward * rotationThisFrame);
         }
 
-        rigidBody.freezeRotation = false; //here we resume the physics control of rotation
+        //rigidBody.freezeRotation = false; //here we resume the physics control of rotation
     }
 
 
     void LoadNextLevel()
     {
         audioSource.Stop();
-        SceneManager.LoadScene(currentLevel); // TODO allow for more than 2 levels.
+        int currentLevel = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(currentLevel+1); // TODO END gaME SCREEN!
     }
 
-    void LoadFirstLevel()
+    void LoadCurrentLevel()
     {
+        int currentLevel = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(currentLevel); // todo allow for more than 2 levels
     }
 }
