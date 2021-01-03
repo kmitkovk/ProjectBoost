@@ -14,6 +14,7 @@ public class Rocket : MonoBehaviour
 
     [SerializeField] float rcsThrust = 200f;
     [SerializeField] float mainThrust = 300f;
+    [SerializeField] float levelLoadDelay = 1f;
 
     [SerializeField] AudioClip mainEngine;
     [SerializeField] AudioClip deathSound;
@@ -22,7 +23,6 @@ public class Rocket : MonoBehaviour
     [SerializeField] ParticleSystem mainEngineParticles;
     [SerializeField] ParticleSystem successParticles;
     [SerializeField] ParticleSystem deathParticles;
-
 
 
     void Start()
@@ -48,7 +48,7 @@ public class Rocket : MonoBehaviour
     {
 
         if (state != State.Alive) { return; } //ignore colisions when dead
-
+        
 
         switch (collision.gameObject.tag)
         {
@@ -76,7 +76,7 @@ public class Rocket : MonoBehaviour
         if(!successParticles.isPlaying) { successParticles.Play(); }
         audioSource.PlayOneShot(sucessSound, 0.2f); // second arg for volume
         currentLevel++;
-        Invoke("LoadNextLevel", 1f); // parametarize the time
+        Invoke("LoadNextLevel", levelLoadDelay); 
     }
 
     void StartDeathSequence()
@@ -84,6 +84,7 @@ public class Rocket : MonoBehaviour
         print("Hit Something Deadly"); // kill player
         state = State.Dying;
         audioSource.Stop();
+        //transform.DetachChildren(); find a way to make the booster and nose fly off
         if (!deathParticles.isPlaying) { deathParticles.Play(); }
         audioSource.PlayOneShot(deathSound, 0.2f); // second arg for volume
         Invoke("LoadFirstLevel", 0.5f);
